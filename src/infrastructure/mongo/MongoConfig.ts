@@ -1,6 +1,3 @@
-/*
- *  Arquivo dedicado a conexão com o banco MongoDB passando as credenciais utilizando variaveis de ambiente
- */
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 dotenv.config();
@@ -11,11 +8,7 @@ const host = process.env.MONGODB_HOST || "mongodb://localhost:27017";
 export default class MongoConfig {
   constructor(app: Express.Application) {
     mongoose
-      .connect(`${host}/${database}`, {
-        //useNewUrlParser: true,
-        //useUnifiedTopology: true,
-        //useCreateIndex: true, option usecreateindex is not supported
-      })
+      .connect(`${host}/${database}`, {})
       .then(async () => {
         console.log(
           `[CONEXÃO COM O BANCO] : SUCESSO => Conexão ao banco realizada devidamente!`,
@@ -24,7 +17,7 @@ export default class MongoConfig {
           .listCollections()
           .toArray();
         colecoes.map((c) => {
-          //new DataWarehouseModel(c.name);
+          console.log(`[CONEXÃO COM O BANCO] : COLEÇÃO => ${c.name}`);
         });
       })
       .catch((error) => {

@@ -1,4 +1,3 @@
-// src/infrastructure/express/routes/usuarioRoutes.ts
 import { Router } from "express";
 import UsuarioHandler from "../../../adapters/usuario/UsuarioHandler";
 import UsuarioService from "../../../application/usuario/UsuarioService";
