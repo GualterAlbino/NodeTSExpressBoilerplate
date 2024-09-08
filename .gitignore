@@ -1,0 +1,6 @@
+# Geral
+node_modules
+
+
+# Ambiente
+.env
