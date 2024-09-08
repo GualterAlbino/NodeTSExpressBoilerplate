@@ -1,0 +1,1 @@
+export const TAMANHO_MAXIMO_DOCUMENTO = 15 * 1024 * 1024 //15MB
