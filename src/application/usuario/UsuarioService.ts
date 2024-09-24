@@ -1,19 +1,19 @@
-//DTOs
-import { QueryUsuarioDTO } from './dto/QueryUsuarioDTO'
-import { CriarUsuarioDTO } from './dto/CriarUsuarioDTO'
-import { ListarUsuarioDTO } from './dto/ListarUsuarioDTO'
-import { AtualizarUsuarioDTO } from './dto/AtualizarUsuarioDTO'
-
 //Domain
+import UsuarioModel from '../../domain/usuario/UsuarioModel'
 import UsuarioRepository from '../../domain/usuario/UsuarioRepository'
-import {
-  InternalServiceError,
-  NotFoundError
-} from '../../domain/base/BaseError'
 
 //Shared
 import Logger from '../../shared/utils/Logger'
-import UsuarioModel from '../../domain/usuario/UsuarioModel'
+
+//Application
+import QueryUsuarioDTO from './dto/QueryUsuarioDTO'
+import CriarUsuarioDTO from './dto/CriarUsuarioDTO'
+import AtualizarUsuarioDTO from './dto/AtualizarUsuarioDTO'
+import BCryptEncoderPassword from '../../infrastructure/bcrypt/BCryptEncoderPassword'
+import {
+  UsuarioInternalServicException,
+  UsuarioNotFoundException
+} from './exceptions/UsuarioExeptions'
 
 export default class UsuarioService {
   private usuarioRepository: UsuarioRepository
@@ -23,32 +23,40 @@ export default class UsuarioService {
     this.usuarioRepository = pUsuarioRepository
   }
 
-  async incluir(pRegistro: CriarUsuarioDTO): Promise<ListarUsuarioDTO> {
+  async incluir(pRegistro: CriarUsuarioDTO): Promise<UsuarioModel> {
     try {
       const usuarios = await this.usuarioRepository.buscar({
         email: pRegistro.email
       })
 
       if (usuarios.length > 0) {
-        throw new InternalServiceError(
+        throw new UsuarioInternalServicException(
           '',
           'Este e-mail já está sendo utilizado por outro usuário!'
         )
       }
 
+      // Criptografa a senha
+      pRegistro.senha = await BCryptEncoderPassword.criptografarSenha(
+        pRegistro.senha
+      )
+
       const usuario = await this.usuarioRepository.incluir(pRegistro.toDomain())
 
-      return new ListarUsuarioDTO(usuario)
+      return usuario
     } catch (error) {
       this.logger.error(error)
-      throw new InternalServiceError(error, 'Erro ao incluir usuário!')
+      throw new UsuarioInternalServicException(
+        error,
+        'Erro ao incluir usuário!'
+      )
     }
   }
 
   async atualizar(
     pId: string,
     pRegistro: AtualizarUsuarioDTO
-  ): Promise<ListarUsuarioDTO> {
+  ): Promise<UsuarioModel> {
     try {
       const updatedUsuario = await this.usuarioRepository.atualizar(
         pId,
@@ -56,51 +64,54 @@ export default class UsuarioService {
       )
 
       if (!updatedUsuario) {
-        throw new NotFoundError('', 'Usuário não encontrado para atualização!')
+        throw new UsuarioNotFoundException(
+          '',
+          'Usuário não encontrado para atualização!'
+        )
       }
 
-      return new ListarUsuarioDTO(updatedUsuario)
+      return updatedUsuario
     } catch (error) {
       this.logger.error(error)
-      throw new InternalServiceError(error, 'Erro ao atualizar o usuário!')
-    }
-  }
-
-  async buscar(pParams: QueryUsuarioDTO): Promise<ListarUsuarioDTO[]> {
-    try {
-      const usuarios = await this.usuarioRepository.buscar(pParams)
-      return usuarios.map((usuario) => new ListarUsuarioDTO(usuario))
-    } catch (error) {
-      this.logger.error(error)
-      throw new InternalServiceError(error, 'Erro ao buscar os usuários!')
-    }
-  }
-
-  async buscarPorEmail(pEmail: string): Promise<UsuarioModel[]> {
-    try {
-      const usuarios = await this.usuarioRepository.buscar({ email: pEmail })
-      return usuarios
-    } catch (error: any) {
-      this.logger.error(error)
-      throw new InternalServiceError(
+      throw new UsuarioInternalServicException(
         error,
-        'Erro ao buscar os usuários por email!'
+        'Erro ao atualizar o usuário!'
       )
     }
   }
 
-  async excluir(pId: string): Promise<ListarUsuarioDTO> {
+  async buscar(pParams: QueryUsuarioDTO): Promise<UsuarioModel[]> {
     try {
-      const usuarioDeletado = await this.usuarioRepository.excluir(pId)
+      const usuarios = await this.usuarioRepository.buscar(pParams)
 
-      if (!usuarioDeletado) {
-        throw new NotFoundError('', 'Usuário não encontrado para exclusão!')
+      return usuarios
+    } catch (error) {
+      this.logger.error(error)
+      throw new UsuarioInternalServicException(
+        error,
+        'Erro ao buscar os usuários!'
+      )
+    }
+  }
+
+  async excluir(pId: string): Promise<UsuarioModel> {
+    try {
+      const usuario = await this.usuarioRepository.excluir(pId)
+
+      if (!usuario) {
+        throw new UsuarioNotFoundException(
+          '',
+          'Usuário não encontrado para exclusão!'
+        )
       }
 
-      return new ListarUsuarioDTO(usuarioDeletado)
-    } catch (error: any) {
+      return usuario
+    } catch (error) {
       this.logger.error(error)
-      throw new InternalServiceError(error, 'Erro ao excluir o usuário!')
+      throw new UsuarioInternalServicException(
+        error,
+        'Erro ao excluir o usuário!'
+      )
     }
   }
 }

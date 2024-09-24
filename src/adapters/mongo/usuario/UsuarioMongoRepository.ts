@@ -1,42 +1,42 @@
-//Domain
+// Domain
 import UsuarioModel from '../../../domain/usuario/UsuarioModel'
 import UsuarioRepository from '../../../domain/usuario/UsuarioRepository'
-import { DatabaseError, NotFoundError } from '../../../domain/base/BaseError'
 
-//Aplication
-import { QueryUsuarioDTO } from '../../../application/usuario/dto/QueryUsuarioDTO'
+// Aplication
+import QueryTaskDTO from '../../../application/task/dto/QueryTaskDTO'
 
-//Infra
-import UsuarioSchema from '../../../infrastructure/mongo/schemas/UsuarioSchema'
-
-//Shared
+// Shared
 import Logger from '../../../shared/utils/Logger'
-import { queryBuilder } from '../../../shared/utils/QueryBuilder'
-import { stringToObjectIDMongo } from '../../../shared/utils/StringToObjectIDMongo'
+
+// Infra
+import UsuarioSchema from '../../../infrastructure/mongo/schemas/UsuarioSchema'
+import { queryBuilder } from '../../../infrastructure/mongo/utils/QueryBuilder'
+import { stringToObjectIDMongo } from '../../../infrastructure/mongo/utils/StringToObjectIDMongo'
 
 export default class UsuarioMongoRepository implements UsuarioRepository {
   private readonly logger = new Logger(this.constructor.name)
 
-  async buscar(pParams: QueryUsuarioDTO): Promise<UsuarioModel[]> {
+  async buscar(pParams: QueryTaskDTO): Promise<UsuarioModel[]> {
     try {
       const query = queryBuilder(pParams)
+
       const usuarios = await UsuarioSchema.find(query).exec()
 
-      return usuarios
+      return usuarios.map((usuario) => new UsuarioModel(usuario))
     } catch (error) {
       this.logger.error(error)
-      throw new DatabaseError(error, 'Erro ao buscar os usuários!')
+      throw error
     }
   }
 
   async incluir(pRegistro: UsuarioModel): Promise<UsuarioModel> {
     try {
-      const usuario = new UsuarioSchema(pRegistro)
+      const usuario = await new UsuarioSchema(pRegistro).save()
 
-      return await usuario.save()
+      return new UsuarioModel(usuario)
     } catch (error) {
       this.logger.error(error)
-      throw new DatabaseError(error, 'Erro ao incluir o usuário!')
+      throw error
     }
   }
 
@@ -59,10 +59,10 @@ export default class UsuarioMongoRepository implements UsuarioRepository {
         { new: true }
       ).exec()
 
-      return updatedUsuario
+      return updatedUsuario ? new UsuarioModel(updatedUsuario) : null
     } catch (error) {
       this.logger.error(error)
-      throw new DatabaseError(error, 'Erro ao atualizar o usuário!')
+      throw error
     }
   }
 
@@ -70,10 +70,10 @@ export default class UsuarioMongoRepository implements UsuarioRepository {
     try {
       const usuarioDeletado = await UsuarioSchema.findByIdAndDelete(pId).exec()
 
-      return usuarioDeletado
+      return usuarioDeletado ? new UsuarioModel(usuarioDeletado) : null
     } catch (error) {
       this.logger.error(error)
-      throw new DatabaseError(error, 'Erro ao excluir o usuário!')
+      throw error
     }
   }
 }

@@ -1,9 +1,9 @@
 // Application
 import UsuarioService from '../../../application/usuario/UsuarioService'
-import { CriarUsuarioDTO } from '../../../application/usuario/dto/CriarUsuarioDTO'
-import { QueryUsuarioDTO } from '../../../application/usuario/dto/QueryUsuarioDTO'
-import { ListarUsuarioDTO } from '../../../application/usuario/dto/ListarUsuarioDTO'
-import { AtualizarUsuarioDTO } from '../../../application/usuario/dto/AtualizarUsuarioDTO'
+import CriarUsuarioDTO from '../../../application/usuario/dto/CriarUsuarioDTO'
+import QueryUsuarioDTO from '../../../application/usuario/dto/QueryUsuarioDTO'
+import ListarUsuarioDTO from '../../../application/usuario/dto/ListarUsuarioDTO'
+import AtualizarUsuarioDTO from '../../../application/usuario/dto/AtualizarUsuarioDTO'
 
 // Shared
 import Logger from '../../../shared/utils/Logger'
@@ -18,9 +18,8 @@ export default class UsuarioHandler {
 
   async incluir(pRegistro: CriarUsuarioDTO): Promise<ListarUsuarioDTO> {
     try {
-      const retorno = await this.usuarioService.incluir(pRegistro)
-
-      return retorno
+      const usuario = await this.usuarioService.incluir(pRegistro)
+      return new ListarUsuarioDTO(usuario)
     } catch (error) {
       this.logger.error(error)
       throw error
@@ -31,7 +30,7 @@ export default class UsuarioHandler {
     try {
       // Passa os parâmetros de busca para o serviço
       const usuarios = await this.usuarioService.buscar(pParams)
-      return usuarios
+      return usuarios.map((usuario) => new ListarUsuarioDTO(usuario))
     } catch (error) {
       this.logger.error(error)
       throw error
@@ -40,8 +39,8 @@ export default class UsuarioHandler {
 
   async excluir(pId: string): Promise<ListarUsuarioDTO> {
     try {
-      const usuarioDeletado = await this.usuarioService.excluir(pId)
-      return usuarioDeletado
+      const usuario = await this.usuarioService.excluir(pId)
+      return new ListarUsuarioDTO(usuario)
     } catch (error) {
       this.logger.error(error)
       throw error
@@ -54,8 +53,7 @@ export default class UsuarioHandler {
   ): Promise<ListarUsuarioDTO> {
     try {
       const usuario = await this.usuarioService.atualizar(pId, pRegistro)
-
-      return usuario
+      return new ListarUsuarioDTO(usuario)
     } catch (error) {
       this.logger.error(error)
       throw error

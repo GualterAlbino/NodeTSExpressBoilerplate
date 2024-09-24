@@ -1,10 +1,7 @@
-import UsuarioModel from '../../../domain/usuario/UsuarioModel'
 import BaseDTO from '../../base/BaseDTO'
+import UsuarioModel from '../../../domain/usuario/UsuarioModel'
 
-export class ListarUsuarioDTO extends BaseDTO {
-  @BaseDTO.Required
-  id: string
-
+export default class ListarUsuarioDTO extends BaseDTO {
   @BaseDTO.Required
   role: string
 
@@ -15,14 +12,24 @@ export class ListarUsuarioDTO extends BaseDTO {
   email: string
 
   constructor(pUsuario: UsuarioModel) {
-    super()
-    this.id = pUsuario.id
+    super(pUsuario)
+
     this.role = pUsuario.role
     this.nome = pUsuario.nome
     this.email = pUsuario.email
+
+    BaseDTO.validate(this)
   }
 
   toDomain() {
-    return new UsuarioModel(true, this.id, this.role, this.nome, this.email, '')
+    return new UsuarioModel(
+      {
+        id: this.id,
+        role: this.role,
+        nome: this.nome,
+        email: this.email
+      },
+      false
+    )
   }
 }

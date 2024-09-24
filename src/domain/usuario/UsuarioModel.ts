@@ -1,20 +1,29 @@
 import BaseModel from '../base/BaseModel'
-import { ValidationDomainError } from '../base/BaseError'
 
-export default class UsuarioModel extends BaseModel<UsuarioModel> {
-  id: string = ''
+export type TUsuarioModel = {
+  nome: string
+  role: string
+  senha: string
+  email: string
+  criadoEm: Date
+  atualizadoEm: Date
+}
 
+export default class UsuarioModel
+  extends BaseModel<UsuarioModel>
+  implements TUsuarioModel
+{
   @BaseModel.Required
   nome: string = ''
-
-  @BaseModel.Required
-  _email: string = ''
 
   @BaseModel.Required
   senha: string = ''
 
   @BaseModel.Required
-  _role: string = ''
+  private _role: string = ''
+
+  @BaseModel.Required
+  private _email: string = ''
 
   public static readonly ERoleUsuario = {
     CLIENTE: 'CLIENTE',
@@ -23,19 +32,15 @@ export default class UsuarioModel extends BaseModel<UsuarioModel> {
   } as const
 
   constructor(
-    pValidarCadastro: boolean = true,
-    pId?: string,
-    pRole?: string,
-    pNome?: string,
-    pEmail?: string,
-    pSenha?: string
+    pObjeto: Partial<UsuarioModel>,
+    pValidarCadastro: boolean = true
   ) {
-    super()
-    this.id = pId || this.id
-    this.role = pRole || this.role
-    this.nome = pNome || this.nome
-    this.email = pEmail || this.email
-    this.senha = pSenha || this.senha
+    super(pObjeto, pValidarCadastro)
+
+    this.nome = pObjeto.nome || this.nome
+    this.role = pObjeto.role || this._role
+    this.senha = pObjeto.senha || this.senha
+    this.email = pObjeto.email || this._email
 
     if (pValidarCadastro) {
       BaseModel.validate(this)
@@ -52,17 +57,11 @@ export default class UsuarioModel extends BaseModel<UsuarioModel> {
 
   set role(pRole: string) {
     if (!pRole || pRole.trim() === '') {
-      throw new ValidationDomainError(
-        '',
-        `A role do usuário não pode ser vazia! As roles válidas são: ${Object.keys(UsuarioModel.ERoleUsuario).join(', ')}`
-      )
+      throw `A role do usuário não pode ser vazia! As roles válidas são: ${Object.keys(UsuarioModel.ERoleUsuario).join(', ')}`
     }
 
     if (!(pRole.toUpperCase() in UsuarioModel.ERoleUsuario)) {
-      throw new ValidationDomainError(
-        '',
-        `O status:[${pRole}] não é permitido! Os status válidos são: ${Object.keys(UsuarioModel.ERoleUsuario).join(', ')}`
-      )
+      throw `O status:[${pRole}] não é permitido! Os status válidos são: ${Object.keys(UsuarioModel.ERoleUsuario).join(', ')}`
     }
 
     this._role = pRole.toUpperCase()
@@ -78,16 +77,13 @@ export default class UsuarioModel extends BaseModel<UsuarioModel> {
 
   set email(pEmail: string) {
     if (!pEmail || pEmail.trim() === '') {
-      throw new ValidationDomainError(
-        '',
-        'O e-mail do usuário não pode ser vazio!'
-      )
+      throw 'O e-mail do usuário não pode ser vazio!'
     }
 
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
     if (!regex.test(pEmail)) {
-      throw new ValidationDomainError('', `O e-mail: [${pEmail}] é inválido!`)
+      throw `O e-mail: [${pEmail}] é inválido!`
     }
 
     this._email = pEmail
