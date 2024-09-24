@@ -1,31 +1,40 @@
+// Bibliotecas
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
-
 dotenv.config()
 
-const database = process.env.MONGODB_DATABASE || 'database'
-const host = process.env.MONGODB_HOST || 'mongodb://localhost:27017'
+// Logger
+import Logger from '../../shared/utils/Logger'
 
 export default class MongoConfig {
-  constructor() {
-    mongoose
-      .connect(`${host}/${database}`, {})
-      .then(async () => {
-        const colecoes = []
-        const conexao = mongoose.connection.db
-        if (conexao) {
-          colecoes.push(...(await conexao.listCollections().toArray()))
-        }
+  private readonly host: string
+  private readonly database: string
+  private readonly logger: Logger = new Logger(this.constructor.name)
 
-        colecoes.map((c) => {
-          //new DataWarehouseSchema(c.name, {});
-        })
-        console.log(
-          `[CONEXÃO COM O BANCO] : SUCESSO => Conexão ao banco realizada devidamente!`
-        )
+  constructor() {
+    this.database = process.env.MONGODB_DATABASE || 'database'
+    this.host = process.env.MONGODB_HOST || 'mongodb://localhost:27017'
+  }
+
+  async start() {
+    try {
+      this.logger.info(`Iniciando conexão com o banco...`)
+      await mongoose.connect(`${this.host}/${this.database}`, {})
+      const colecoes = []
+      const conexao = mongoose.connection.db
+
+      if (conexao) {
+        colecoes.push(...(await conexao.listCollections().toArray()))
+      }
+
+      colecoes.map((c) => {
+        //new DataWarehouseSchema(c.name, {});
       })
-      .catch((error) => {
-        console.log(`[CONEXÃO COM O BANCO] : ERRO => ${error}`)
-      })
+
+      this.logger.info(`Conexão ao banco realizada devidamente!`)
+    } catch (error) {
+      this.logger.info(`[CONEXÃO COM O BANCO] : ERRO => ${error}`)
+      throw error // Lança o erro para interromper a inicialização do servidor
+    }
   }
 }
