@@ -1,7 +1,25 @@
 import { ValidationDTOError } from '../../domain/base/BaseError'
 
 export default class BaseDTO {
-  constructor() {}
+  private _id: any
+  criadoEm: Date | undefined
+  atualizadoEm: Date | undefined
+
+  constructor(pObjeto?: any) {
+    if (pObjeto) {
+      this._id = pObjeto.id || pObjeto._id || this._id
+      this.criadoEm = pObjeto.criadoEm
+      this.atualizadoEm = pObjeto.atualizadoEm
+    }
+  }
+
+  get id(): string {
+    return this._id
+  }
+
+  set id(pId: string) {
+    this._id = pId
+  }
 
   /**
    * Decorador para marcar uma propriedade como obrigatória.
@@ -44,12 +62,19 @@ export default class BaseDTO {
     const requiredFields = obj.constructor.requiredFields || []
 
     // Filtra os campos obrigatórios que estão vazios
-    const missingFields = requiredFields.filter((field: string) => !obj[field])
+    //const missingFields = requiredFields.filter((field: string) => !obj[field]);
+    const missingFields = []
+    for (const field of requiredFields) {
+      if (obj[field] == null || obj[field] == undefined || obj[field] === '') {
+        missingFields.push(field)
+      }
+    }
 
     // Se houver campos obrigatórios faltando, lança uma exceção de validação
     if (missingFields.length > 0) {
       throw new ValidationDTOError(
-        '',
+        `${obj.constructor.name}`,
+        'Parâmetros obrigatórios não informados',
         `Os seguintes campos são obrigatórios e estão vazios: ${missingFields.join(', ')}`
       )
     }

@@ -1,9 +1,9 @@
 export class BaseError extends Error {
   public readonly tipo: string //Tipo de erro (DataBaseError, NotFoundError, etc)
-  public readonly erro: string //Erro original
-  public readonly mensagem: string //Mensagem personalizada
+  public erro: Error | string //Erro original
+  public mensagem: string //Mensagem personalizada
 
-  constructor(pTipo: string, pErro: string | any, pMensagem: string) {
+  constructor(pTipo: string, pErro: Error | any, pMensagem: string) {
     super(pMensagem)
     /**
      * Define o protótipo do objeto. O protótipo é o objeto que contém os métodos e propriedades que um objeto herda.
@@ -15,13 +15,39 @@ export class BaseError extends Error {
      */
     Object.setPrototypeOf(this, new.target.prototype)
 
-    this.tipo = pTipo
-    this.mensagem = pMensagem
+    if (pErro instanceof BaseError) {
+      // Se já se tratar de um erro personalizado, propaga para frente ao invés de sobrescrever
+      this.tipo = ''
+      this.erro = ''
+      this.mensagem = ''
+
+      pErro.erro = pErro.mensagem
+      pErro.mensagem = pMensagem
+
+      return pErro
+    } else {
+      // Caso não seja um erro personalizado, define o erro atual
+      this.tipo = pTipo
+      this.mensagem = pMensagem
+      this.erro = pErro.message ? pErro.message : pErro
+    }
+
+    /*
+    if (pErro && pErro.tipo) {
+      // Sempre dá preferência há erros lançados primeiro
+      this.tipo = pErro.tipo;
+      this.erro = pErro.erro;
+      this.mensagem = pErro.mensagem;
+    } else {
+      // Caso não exista erro anterior, define o erro atual
+      this.tipo = pTipo;
+      this.mensagem = pMensagem;
+    }
 
     //Extrai a mensagem do erro caso exista
-    if (pErro && pErro.message) this.erro = pErro.message
-    else this.erro = pErro || ''
-
+    if (pErro && pErro.message) this.erro = pErro.message;
+    else this.erro = pErro || '';
+ */
     /**
      * Captura a stack trace apenas se Error.captureStackTrace estiver disponível
      *  - https://nodejs.org/api/errors.html#errors_error_capturestacktrace_targetobject_constructoropt
@@ -39,43 +65,81 @@ export class BaseError extends Error {
 }
 
 export class ValidationDTOError extends BaseError {
-  constructor(pErro: any, pMensagem: string) {
-    super('ValidarionDTOError', pErro, pMensagem)
+  constructor(
+    pOrigemException: String,
+    pErro: Error | string,
+    pMensagem: string
+  ) {
+    super(`${pOrigemException}_ValidationDTOError`, pErro, pMensagem)
   }
 }
 
 export class ValidationDomainError extends BaseError {
-  constructor(pErro: any, pMensagem: string) {
-    super('ValidationDomainError', pErro, pMensagem)
+  constructor(
+    pOrigemException: String,
+    pErro: Error | string,
+    pMensagem: string
+  ) {
+    super(`${pOrigemException}_ValidationDomainError`, pErro, pMensagem)
   }
 }
 
 export class NotFoundError extends BaseError {
-  constructor(pErro: any, pMensagem: string) {
-    super('NotFoundError', pErro, pMensagem)
+  constructor(
+    pOrigemException: String,
+    pErro: Error | string,
+    pMensagem: string
+  ) {
+    super(`${pOrigemException}_NotFoundError`, pErro, pMensagem)
   }
 }
 
 export class DatabaseError extends BaseError {
-  constructor(pErro: any, pMensagem: string) {
-    super('DatabaseError', pErro, pMensagem)
+  constructor(
+    pOrigemException: String,
+    pErro: Error | string,
+    pMensagem: string
+  ) {
+    super(`${pOrigemException}_DatabaseError`, pErro, pMensagem)
   }
 }
 
 export class InternalServiceError extends BaseError {
-  constructor(pErro: any, pMensagem: string) {
-    super('InternalServiceError', pErro, pMensagem) //502
+  constructor(
+    pOrigemException: String,
+    pErro: Error | string,
+    pMensagem: string
+  ) {
+    super(`${pOrigemException}_InternalServiceError`, pErro, pMensagem) //502
   }
 }
 
 export class ExternalServiceError extends BaseError {
-  constructor(pErro: any, pMensagem: string) {
-    super('ExternalServiceError', pErro, pMensagem) //502
+  constructor(
+    pOrigemException: String,
+    pErro: Error | string,
+    pMensagem: string
+  ) {
+    super(`${pOrigemException}_ExternalServiceError`, pErro, pMensagem) //502
   }
 }
 
 export class UnauthorizedError extends BaseError {
-  constructor(pErro: any, pMensagem: string) {
-    super('UnauthorizedError', pErro, pMensagem) //401
+  constructor(
+    pOrigemException: String,
+    pErro: Error | string,
+    pMensagem: string
+  ) {
+    super(`${pOrigemException}_UnauthorizedError`, pErro, pMensagem) //401
+  }
+}
+
+export class ForbiddenError extends BaseError {
+  constructor(
+    pOrigemException: String,
+    pErro: Error | string,
+    pMensagem: string
+  ) {
+    super(`${pOrigemException}_ForbiddenError`, pErro, pMensagem) //403
   }
 }

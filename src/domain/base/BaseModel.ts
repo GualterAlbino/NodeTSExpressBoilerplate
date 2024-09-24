@@ -1,9 +1,28 @@
 import { ValidationDomainError } from './BaseError'
 
 export default abstract class BaseModel<T> {
+  private _id: string = ''
   public criadoEm: Date = new Date()
   public atualizadoEm: Date = new Date()
   public validarCadastro: boolean = true
+
+  constructor(pObjeto: any, pValidarCadastro?: boolean) {
+    if (pObjeto) {
+      this.id = pObjeto.id || pObjeto._id || this.id
+      this.criadoEm = pObjeto.criadoEm || this.criadoEm
+      this.atualizadoEm = pObjeto.atualizadoEm || this.atualizadoEm
+    }
+
+    this.validarCadastro = pValidarCadastro || this.validarCadastro
+  }
+
+  get id(): string {
+    return this._id
+  }
+
+  set id(pId: string) {
+    this._id = pId
+  }
 
   get(pProperty: string): any {
     return (this as any)[pProperty]
@@ -97,6 +116,7 @@ export default abstract class BaseModel<T> {
       })
 
       throw new ValidationDomainError(
+        obj.constructor.name,
         '',
         `Os seguintes campos são obrigatórios e estão vazios: ${fieldsTratados.join(', ')}`
       )
