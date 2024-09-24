@@ -1,3 +1,5 @@
+import { stringToObjectIDMongo } from './StringToObjectIDMongo'
+
 /**
  * Constroi um objeto de consulta com base nos parâmetros informados.
  * - O tipo genérico <T> é utilizado para garantir que o objeto de consulta retornado
@@ -10,7 +12,13 @@
 export function queryBuilder<T>(pParams: T): Partial<T> {
   try {
     return Object.keys(pParams as any).reduce((query, key) => {
-      const value = (pParams as any)[key]
+      let value = (pParams as any)[key]
+
+      if (key == 'id' && value) {
+        key = '_id'
+        value = stringToObjectIDMongo(value)
+      }
+      //console.log('key:', key, 'value:', value);
 
       if (value !== undefined && value !== null) {
         ;(query as any)[key] = value

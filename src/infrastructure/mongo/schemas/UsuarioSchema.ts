@@ -1,14 +1,26 @@
+// Bibliotecas
 import mongoose, { Schema } from 'mongoose'
-import UsuarioModel from '../../../domain/usuario/UsuarioModel'
 
-const UsuarioSchema: Schema = new Schema({
+// Domain
+import { TUsuarioModel } from '../../../domain/usuario/UsuarioModel'
+
+// Constantes
+import { cTABELA_USUARIO } from '../constants/ConstantesMongoDB'
+
+const schemaDefinition: Required<Record<keyof TUsuarioModel, any>> = {
+  senha: { type: String, required: true },
   nome: { type: String, required: true, index: true },
   role: { type: String, required: true, index: true },
   email: { type: String, required: true, index: true },
-  senha: { type: String, required: true },
 
-  updatedAt: { type: Date, default: Date.now },
-  createdAt: { type: Date, default: Date.now }
-})
+  criadoEm: { type: Date, default: Date.now },
+  atualizadoEm: { type: Date, default: Date.now }
+}
 
-export default mongoose.model<UsuarioModel>('Usuario', UsuarioSchema)
+const UsuarioSchema = new Schema(schemaDefinition)
+
+export default mongoose.model<TUsuarioModel>(
+  cTABELA_USUARIO,
+  UsuarioSchema,
+  cTABELA_USUARIO
+)
