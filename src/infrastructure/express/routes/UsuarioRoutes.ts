@@ -1,14 +1,21 @@
+// Bilbioteca
 import { Router } from 'express'
+
+// Middleware
+import { authMiddleware } from '../middleware/AuthMiddleware'
 
 import UsuarioHandler from '../../../adapters/http/usuario/UsuarioHandler'
 import UsuarioService from '../../../application/usuario/UsuarioService'
 import UsuarioController from '../../../adapters/http/usuario/UsuarioController'
-import UsuarioRepositoryImpl from '../../../adapters/mongo/usuario/UsuarioMongoRepository'
-import { authMiddleware } from '../middleware/AuthMiddleware'
+import UsuarioMongoRepository from '../../../adapters/mongo/usuario/UsuarioMongoRepository'
+import UsuarioPostgresRepository from '../../../adapters/postgres/usuario/UsuarioPostgresRepository'
 
 const UsuarioRoutes = Router()
 
-const usuarioRepository = new UsuarioRepositoryImpl()
+//const usuarioRepository = new UsuarioMongoRepository()
+
+
+const usuarioRepository = new UsuarioPostgresRepository()
 const usuarioService = new UsuarioService(usuarioRepository)
 const usuarioHandler = new UsuarioHandler(usuarioService)
 const usuarioController = new UsuarioController(usuarioHandler)
@@ -20,9 +27,9 @@ const usuarioController = new UsuarioController(usuarioHandler)
  *     summary: Lista todos os usuários
  *     tags: [Usuario]
  */
-UsuarioRoutes.get('/', authMiddleware, (req, res, next) =>
+UsuarioRoutes.get('/', (req, res, next) =>
   usuarioController.buscar(req, res, next)
-)
+) //authMiddleware, - Removido para facilitar
 
 /**
  * @swagger
@@ -31,9 +38,9 @@ UsuarioRoutes.get('/', authMiddleware, (req, res, next) =>
  *     summary: Cria um usuário
  *     tags: [Usuario]
  */
-UsuarioRoutes.post('/', authMiddleware, (req, res, next) =>
+UsuarioRoutes.post('/', (req, res, next) =>
   usuarioController.incluir(req, res, next)
-)
+) //authMiddleware, - Removido para facilitar
 
 /**
  * @swagger

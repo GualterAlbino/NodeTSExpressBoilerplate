@@ -6,7 +6,7 @@ export default class QueryAgendamentoDTO extends BaseDTO {
   criadoEm: Date | undefined
 
   @BaseDTO.Optional
-  atualizadoEm: Date | undefined
+  alteradoEm: Date | undefined
 
   @BaseDTO.Optional
   frequencia: string | undefined
@@ -22,7 +22,7 @@ export default class QueryAgendamentoDTO extends BaseDTO {
 
     this.criadoEm = pAgendamento.criadoEm
     this.frequencia = pAgendamento.frequencia
-    this.atualizadoEm = pAgendamento.atualizadoEm
+    this.alteradoEm = pAgendamento.alteradoEm
     this.usuarioCriacaoId = pAgendamento.usuarioCriacaoId
     this.usuarioAlteracaoId = pAgendamento.usuarioAlteracaoId
 

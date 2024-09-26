@@ -31,6 +31,10 @@ export default class UsuarioMongoRepository implements UsuarioRepository {
 
   async incluir(pRegistro: UsuarioModel): Promise<UsuarioModel> {
     try {
+      const registro = pRegistro
+
+      console.log('Registr: ', registro)
+
       const usuario = await new UsuarioSchema(pRegistro).save()
 
       return new UsuarioModel(usuario)

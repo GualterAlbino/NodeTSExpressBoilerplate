@@ -1,16 +1,16 @@
 import { ValidationDomainError } from './BaseError'
 
 export default abstract class BaseModel<T> {
-  private _id: string = ''
+  private _id!: string
   public criadoEm: Date = new Date()
-  public atualizadoEm: Date = new Date()
+  public alteradoEm: Date = new Date()
   public validarCadastro: boolean = true
 
   constructor(pObjeto: any, pValidarCadastro?: boolean) {
     if (pObjeto) {
       this.id = pObjeto.id || pObjeto._id || this.id
       this.criadoEm = pObjeto.criadoEm || this.criadoEm
-      this.atualizadoEm = pObjeto.atualizadoEm || this.atualizadoEm
+      this.alteradoEm = pObjeto.alteradoEm || this.alteradoEm
     }
 
     this.validarCadastro = pValidarCadastro || this.validarCadastro

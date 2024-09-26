@@ -1,7 +1,8 @@
-// Mongo
+// Database
 import MongoConfig from './mongo/MongoConfig'
+import PostgresConfig from './postgres/PostgresConfig'
 
-// Express
+// API
 import ExpressConfig from './express/ExpressConfig'
 
 // Swagger
@@ -19,8 +20,12 @@ async function IniciarServer() {
     logger.info('Iniciando o servidor...')
 
     // Conectando ao MongoDB
-    const mongo = new MongoConfig()
-    await mongo.start()
+    //const mongo = new MongoConfig()
+    //await mongo.start()
+
+    // Conectando ao PostgreSQL
+    const postgres = PostgresConfig.getInstance()
+    await postgres.start()
 
     // Configurando o Express
     const express = new ExpressConfig()

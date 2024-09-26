@@ -1,12 +1,13 @@
 import BaseModel from '../base/BaseModel'
 
 export type TTaskModel = {
+  id: string
   criadoEm: Date
   status: string
   mensagem: string
   percentual: number
   frequencia: string
-  atualizadoEm: Date
+  alteradoEm: Date
   agendamentoId: string
   tipoAgendamento: string
 }

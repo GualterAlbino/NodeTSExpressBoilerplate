@@ -231,6 +231,7 @@ export default class TaskService {
 
   async inicializarTarefasCron(): Promise<boolean> {
     try {
+      /*
       const tarefas = await this.taskRepository.buscar({
         status: TaskModel.EStatusTask.AGENDADO
       })
@@ -270,6 +271,7 @@ export default class TaskService {
       this.logger.info(
         `Realizado o agendamento de ${tarefas.length} ${tarefas.length > 1 || tarefas.length == 0 ? 'tarefas' : 'tarefa'}.`
       )
+        */
       return true
     } catch (error) {
       this.logger.error(error)

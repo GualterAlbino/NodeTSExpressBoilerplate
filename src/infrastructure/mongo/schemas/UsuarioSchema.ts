@@ -8,13 +8,14 @@ import { TUsuarioModel } from '../../../domain/usuario/UsuarioModel'
 import { cTABELA_USUARIO } from '../constants/ConstantesMongoDB'
 
 const schemaDefinition: Required<Record<keyof TUsuarioModel, any>> = {
+  id: { type: String, required: false, index: true },
   senha: { type: String, required: true },
   nome: { type: String, required: true, index: true },
   role: { type: String, required: true, index: true },
   email: { type: String, required: true, index: true },
 
   criadoEm: { type: Date, default: Date.now },
-  atualizadoEm: { type: Date, default: Date.now }
+  alteradoEm: { type: Date, default: Date.now }
 }
 
 const UsuarioSchema = new Schema(schemaDefinition)

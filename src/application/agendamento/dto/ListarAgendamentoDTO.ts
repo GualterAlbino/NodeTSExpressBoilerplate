@@ -17,7 +17,7 @@ export default class ListarAgendamentoDTO extends BaseDTO {
   criadoEm: Date
 
   @BaseDTO.Required
-  atualizadoEm: Date
+  alteradoEm: Date
 
   constructor(
     pAgendamento: AgendamentoModel,
@@ -28,7 +28,7 @@ export default class ListarAgendamentoDTO extends BaseDTO {
 
     this.criadoEm = pAgendamento.criadoEm
     this.frequencia = pAgendamento.frequencia
-    this.atualizadoEm = pAgendamento.atualizadoEm
+    this.alteradoEm = pAgendamento.alteradoEm
     this.tipoAgendamento = pAgendamento.tipoAgendamento
 
     if (pUsuario) {

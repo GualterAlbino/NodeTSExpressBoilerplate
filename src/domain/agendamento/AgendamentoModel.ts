@@ -1,9 +1,10 @@
 import BaseModel from '../base/BaseModel'
 
 export type TAgendamentoModel = {
+  id: string
   criadoEm: Date
   status: string
-  atualizadoEm: Date
+  alteradoEm: Date
   frequencia: string
   tipoAgendamento: string
   usuarioCriacaoId: string

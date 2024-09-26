@@ -6,6 +6,7 @@ import {
 } from '../constants/ConstantesMongoDB'
 
 const schemaDefinition: Required<Record<keyof TAgendamentoModel, any>> = {
+  id: { type: String, required: true, index: true },
   status: { type: String, required: true, index: true },
   frequencia: { type: String, required: true, index: true },
   tipoAgendamento: { type: String, required: true, index: true },
@@ -27,7 +28,7 @@ const schemaDefinition: Required<Record<keyof TAgendamentoModel, any>> = {
 
   // Padrão
   criadoEm: { type: Date, default: Date.now },
-  atualizadoEm: { type: Date, default: Date.now }
+  alteradoEm: { type: Date, default: Date.now }
 }
 
 const AgendamentoSchema = new Schema(schemaDefinition)

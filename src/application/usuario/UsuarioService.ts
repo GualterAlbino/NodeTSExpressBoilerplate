@@ -16,7 +16,7 @@ import {
 } from './exceptions/UsuarioExeptions'
 
 export default class UsuarioService {
-  private usuarioRepository: UsuarioRepository
+  private readonly usuarioRepository: UsuarioRepository
   private readonly logger = new Logger(this.constructor.name)
 
   constructor(pUsuarioRepository: UsuarioRepository) {

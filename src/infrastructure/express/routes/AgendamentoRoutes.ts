@@ -5,9 +5,12 @@ import { authMiddleware } from '../middleware/AuthMiddleware'
 
 // Implementação dos Repository's
 import TaskMongoRepository from '../../../adapters/mongo/task/TaskMongoRepository'
+import TaskPostgresRepository from '../../../adapters/postgres/task/TaskPostgresRepository'
 import CronSchedulerNodeRepository from '../../cron-scheduler/CronSchedulerNodeRepository'
 import UsuarioMongoRepository from '../../../adapters/mongo/usuario/UsuarioMongoRepository'
+import UsuarioPostgresRepository from '../../../adapters/postgres/usuario/UsuarioPostgresRepository'
 import AgendamentoMongoRepository from '../../../adapters/mongo/agendamento/AgendamentoMongoRepository'
+import AgendamentoPostgresRepository from '../../../adapters/postgres/agendamento/AgendamentoPostgresRepository'
 
 import TaskService from '../../../application/task/TaskService'
 import UsuarioService from '../../../application/usuario/UsuarioService'
@@ -20,10 +23,13 @@ import CronScheduleService from '../../../application/cron-scheduler/CronSchedul
 const AgendamentoRoutes = Router()
 
 // Repositórios
-const taskRepository = new TaskMongoRepository()
-const usuarioRepository = new UsuarioMongoRepository()
+//const taskRepository = new TaskMongoRepository()
+const taskRepository = new TaskPostgresRepository()
+//const usuarioRepository = new UsuarioMongoRepository()
+const usuarioRepository = new UsuarioPostgresRepository()
 const cronSchedulerRepository = new CronSchedulerNodeRepository()
-const agendamentoRepository = new AgendamentoMongoRepository()
+//const agendamentoRepository = new AgendamentoMongoRepository()
+const agendamentoRepository = new AgendamentoPostgresRepository()
 
 // Serviços
 const usuarioService = new UsuarioService(usuarioRepository)

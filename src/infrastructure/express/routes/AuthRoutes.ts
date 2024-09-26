@@ -4,10 +4,11 @@ import AuthService from '../../../application/security/AuthService'
 import AuthHandler from '../../../adapters/http/security/AuthHandler'
 import AuthController from '../../../adapters/http/security/AuthController'
 import UsuarioMongoRepository from '../../../adapters/mongo/usuario/UsuarioMongoRepository'
+import UsuarioPostgresRepository from '../../../adapters/postgres/usuario/UsuarioPostgresRepository'
 
 const AuthRoutes = Router()
 
-const usuarioRepository = new UsuarioMongoRepository()
+const usuarioRepository = new UsuarioPostgresRepository()
 const authService = new AuthService(usuarioRepository)
 const authHandler = new AuthHandler(authService)
 const authController = new AuthController(authHandler)

@@ -1,24 +1,16 @@
 import { ValidationDTOError } from '../../domain/base/BaseError'
 
 export default class BaseDTO {
-  private _id: any
+  id: any
   criadoEm: Date | undefined
-  atualizadoEm: Date | undefined
+  alteradoEm: Date | undefined
 
   constructor(pObjeto?: any) {
     if (pObjeto) {
-      this._id = pObjeto.id || pObjeto._id || this._id
+      this.id = pObjeto.id || pObjeto._id || this.id
       this.criadoEm = pObjeto.criadoEm
-      this.atualizadoEm = pObjeto.atualizadoEm
+      this.alteradoEm = pObjeto.alteradoEm
     }
-  }
-
-  get id(): string {
-    return this._id
-  }
-
-  set id(pId: string) {
-    this._id = pId
   }
 
   /**

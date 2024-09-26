@@ -11,6 +11,7 @@ import {
 } from '../constants/ConstantesMongoDB'
 
 const schemaDefinition: Required<Record<keyof TTaskModel, any>> = {
+  id: { type: String, required: true, index: true },
   percentual: { type: Number, default: 0 },
   mensagem: { type: String, required: false },
   status: { type: String, required: true, index: true },
@@ -27,7 +28,7 @@ const schemaDefinition: Required<Record<keyof TTaskModel, any>> = {
 
   // Padrão
   criadoEm: { type: Date, default: Date.now },
-  atualizadoEm: { type: Date, default: Date.now }
+  alteradoEm: { type: Date, default: Date.now }
 }
 
 const TaskSchema = new Schema(schemaDefinition)

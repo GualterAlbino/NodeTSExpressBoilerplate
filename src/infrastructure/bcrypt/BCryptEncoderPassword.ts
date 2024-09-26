@@ -1,5 +1,5 @@
 //Externos
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 
 export default class BCryptEncoderPassword {
   static async criptografarSenha(pSenha: string): Promise<string> {

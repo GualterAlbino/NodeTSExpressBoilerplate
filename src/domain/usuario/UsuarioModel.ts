@@ -1,12 +1,13 @@
 import BaseModel from '../base/BaseModel'
 
 export type TUsuarioModel = {
+  id: string
   nome: string
   role: string
   senha: string
   email: string
   criadoEm: Date
-  atualizadoEm: Date
+  alteradoEm: Date
 }
 
 export default class UsuarioModel

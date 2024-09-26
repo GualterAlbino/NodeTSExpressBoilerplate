@@ -1,16 +1,22 @@
+// Biblioteca
 import { Router } from 'express'
 
+// Middleware
 import { authMiddleware } from '../middleware/AuthMiddleware'
+
+// Implementação dos Repository's
 import TaskService from '../../../application/task/TaskService'
 import TaskHandler from '../../../adapters/http/task/TaskHandler'
 import TaskController from '../../../adapters/http/task/TaskController'
 import TaskMongoRepository from '../../../adapters/mongo/task/TaskMongoRepository'
+import TaskPostgresRepository from '../../../adapters/postgres/task/TaskPostgresRepository'
 import CronSchedulerNodeRepository from '../../cron-scheduler/CronSchedulerNodeRepository'
 import CronScheduleService from '../../../application/cron-scheduler/CronScheduleService'
 
 const TaskRoutes = Router()
 
-const taskRepository = new TaskMongoRepository()
+//const taskRepository = new TaskMongoRepository()
+const taskRepository = new TaskPostgresRepository()
 const cronSchedulerRepository = new CronSchedulerNodeRepository()
 
 const cronSchedulerService = new CronScheduleService(cronSchedulerRepository)
